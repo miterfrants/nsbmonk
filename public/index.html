@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#ffe9e0" />
+  <title>語音記帳 🐷</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <!-- ── 登入(magic link)── -->
+    <section class="login hide" id="login">
+      <div class="login__pig">🐷</div>
+      <h1 class="login__title">語音記帳</h1>
+      <p class="login__hint" id="loginHint">輸入 email,我們寄一條登入連結給你</p>
+      <form id="loginForm" class="login__form">
+        <input id="email" type="email" inputmode="email" placeholder="you@example.com" autocomplete="email" required />
+        <button type="submit" class="btn btn--go" id="loginBtn">寄送登入連結</button>
+      </form>
+    </section>
+
+    <!-- ── 麥克風 ── -->
+    <section class="stage hide" id="stage">
+      <button id="mic" class="mic" aria-label="按住錄音">
+        <span class="mic__blob"></span>
+        <span class="mic__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="2" width="6" height="12" rx="3" />
+            <path d="M5 11a7 7 0 0 0 14 0" />
+            <line x1="12" y1="18" x2="12" y2="22" />
+            <line x1="8" y1="22" x2="16" y2="22" />
+          </svg>
+        </span>
+      </button>
+      <div id="status" class="status"></div>
+    </section>
+
+    <!-- ── 確認卡片 ── -->
+    <section class="review hide" id="review">
+      <div class="bubble" id="bubble"></div>
+
+      <div class="card">
+        <div class="field">
+          <label>類型</label>
+          <div class="type-toggle" id="f-type">
+            <button type="button" class="type-toggle__btn" data-type="支出">支出 −</button>
+            <button type="button" class="type-toggle__btn" data-type="收入">收入 +</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-item">項目</label>
+          <input id="f-item" type="text" placeholder="買了什麼？" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="f-amount">金額</label>
+          <div class="amount-wrap">
+            <span class="cur">$</span>
+            <input id="f-amount" type="number" inputmode="numeric" min="0" placeholder="0" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-date">日期</label>
+          <input id="f-date" type="date" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="retry" class="btn btn--ghost" type="button">↺ 重錄</button>
+        <button id="confirm" class="btn btn--go" type="button">確認記帳 ✓</button>
+      </div>
+    </section>
+
+    <!-- ── 成功 ── -->
+    <section class="done hide" id="done">
+      <div class="done__pig">🐷</div>
+      <p class="done__text">記好囉！</p>
+      <p class="done__sub" id="doneSub"></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

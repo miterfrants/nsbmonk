@@ -1,0 +1,274 @@
+/* ============================================================
+   語音記帳 — 可愛撲滿風 🐷
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg1:    #ffe9e0;
+  --bg2:    #fff5d6;
+  --cream:  #fffdf9;
+  --ink:    #6b5249;
+  --ink-soft:#a8938a;
+  --pink:   #ff9eb5;
+  --pink-deep:#ff7a9c;
+  --mint:   #6fd6b6;
+  --mint-deep:#3cc49b;
+  --yellow: #ffcf6b;
+  --line:   #ffe0d3;
+  --radius: 28px;
+  --font:   "Fredoka", "Noto Sans TC", system-ui, sans-serif;
+  --shadow: 0 14px 30px -12px rgba(255,122,156,0.45);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  min-height: 100svh;
+  display: flex;
+  justify-content: center;
+  background:
+    radial-gradient(900px 600px at 15% 0%, var(--bg2) 0%, transparent 55%),
+    radial-gradient(900px 700px at 100% 100%, #ffe2ef 0%, transparent 55%),
+    var(--bg1);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100svh;
+  padding: 22px 22px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 共用:置中填滿剩餘空間 */
+.login, .stage, .review, .done {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+}
+.hide { display: none !important; }
+
+/* ── 麥克風 ────────────────────────────────────────────────── */
+.prompt {
+  font-size: 1.45rem; font-weight: 600; line-height: 1.4;
+  text-align: center; color: var(--ink);
+}
+
+.mic {
+  position: relative;
+  width: 188px; height: 188px;
+  border: none; border-radius: 50%;
+  cursor: pointer;
+  display: grid; place-items: center;
+  background: none;
+  -webkit-user-select: none; user-select: none;
+  touch-action: none;
+  transition: transform 0.2s cubic-bezier(.2,.9,.3,1.4);
+}
+.mic:active { transform: scale(0.93); }
+
+/* 軟糖糖體 */
+.mic__blob {
+  position: absolute; inset: 0;
+  border-radius: 46% 54% 52% 48% / 52% 46% 54% 48%;
+  background: radial-gradient(120% 120% at 32% 26%, #ffc2d1 0%, var(--pink) 48%, var(--pink-deep) 100%);
+  box-shadow: var(--shadow), inset 0 -10px 20px rgba(255,90,130,0.35), inset 0 8px 14px rgba(255,255,255,0.6);
+  animation: wobble 5s ease-in-out infinite;
+}
+@keyframes wobble {
+  0%, 100% { border-radius: 46% 54% 52% 48% / 52% 46% 54% 48%; }
+  50%      { border-radius: 54% 46% 47% 53% / 47% 54% 46% 53%; }
+}
+.mic__icon {
+  position: relative; z-index: 2;
+  color: #fff;
+  display: grid; place-items: center;
+  filter: drop-shadow(0 2px 3px rgba(255,90,130,0.4));
+}
+.mic__icon svg { width: 62px; height: 62px; }
+
+/* 錄音中 */
+.mic.recording .mic__blob {
+  background: radial-gradient(120% 120% at 32% 26%, #ffe08a 0%, var(--yellow) 45%, #ff9eb5 100%);
+  animation: wobble 1.6s ease-in-out infinite, beat 0.9s ease-in-out infinite;
+}
+@keyframes beat { 50% { transform: scale(1.06); } }
+.mic.recording .mic__icon svg { animation: nod 0.7s ease-in-out infinite; }
+@keyframes nod { 50% { transform: scale(1.12) rotate(-4deg); } }
+
+/* 漣漪 */
+.mic::before, .mic::after {
+  content: ""; position: absolute; inset: 0;
+  border-radius: 50%; border: 3px solid var(--pink);
+  opacity: 0; pointer-events: none;
+}
+.mic.recording::before { animation: ripple 1.8s ease-out infinite; }
+.mic.recording::after  { animation: ripple 1.8s ease-out infinite 0.9s; }
+@keyframes ripple {
+  0%   { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.7); }
+}
+
+.status {
+  font-size: 1rem; font-weight: 500;
+  color: var(--ink-soft);
+  min-height: 1.4em; text-align: center;
+  transition: color 0.2s ease;
+}
+.status[data-state="rec"]  { color: var(--pink-deep); font-weight: 600; }
+.status[data-state="busy"] { color: var(--ink); }
+.status[data-state="err"]  { color: #f0648a; font-weight: 600; }
+
+/* ── 登入 ──────────────────────────────────────────────────── */
+.login__pig { font-size: 4.6rem; animation: wobble-pig 4s ease-in-out infinite; }
+@keyframes wobble-pig { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+.login__title { font-size: 1.9rem; font-weight: 700; color: var(--ink); }
+.login__hint {
+  font-size: 1rem; color: var(--ink-soft); text-align: center;
+  line-height: 1.6; max-width: 24ch; margin-top: -10px;
+}
+.login__hint.ok  { color: var(--mint-deep); font-weight: 600; }
+.login__hint.err { color: #f0648a; font-weight: 600; }
+.login__form { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.login__form input {
+  width: 100%;
+  border: 2px solid var(--line); border-radius: 18px;
+  background: var(--cream);
+  padding: 16px 20px;
+  font-family: var(--font); font-size: 1.05rem; color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.login__form input::placeholder { color: #d9c7bf; }
+.login__form input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(255,158,181,0.25);
+}
+.login__form .btn { width: 100%; }
+
+/* ── 確認卡片 ──────────────────────────────────────────────── */
+.bubble {
+  position: relative;
+  max-width: 100%;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: 20px 20px 20px 6px;
+  padding: 12px 16px;
+  font-size: 0.95rem; color: var(--ink);
+  box-shadow: 0 6px 16px -10px rgba(255,122,156,0.5);
+  align-self: flex-start;
+}
+.bubble::before { content: "🗣️ 你說："; color: var(--ink-soft); margin-right: 4px; }
+
+.card {
+  width: 100%;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px 22px;
+  box-shadow: 0 18px 40px -22px rgba(255,122,156,0.6);
+}
+.field {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 0;
+}
+.field + .field { border-top: 2px dashed var(--line); }
+.field label {
+  width: 56px; flex-shrink: 0;
+  font-weight: 600; font-size: 0.95rem; color: var(--ink-soft);
+}
+.field input {
+  flex: 1; width: 100%;
+  border: none; background: none; outline: none;
+  font-family: var(--font); font-size: 1.25rem; font-weight: 600;
+  color: var(--ink);
+}
+.field input::placeholder { color: #d9c7bf; font-weight: 500; }
+.type-toggle { flex: 1; display: flex; gap: 8px; }
+.type-toggle__btn {
+  flex: 1;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 8px 0;
+  background: #fff;
+  font-family: var(--font); font-size: 1rem; font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.type-toggle__btn.active[data-type="支出"] {
+  background: linear-gradient(135deg, #ffb0c2, #ff7a9c);
+  border-color: transparent;
+  color: #fff;
+}
+.type-toggle__btn.active[data-type="收入"] {
+  background: linear-gradient(135deg, #84e0c6, var(--mint-deep));
+  border-color: transparent;
+  color: #fff;
+}
+
+.amount-wrap { flex: 1; display: flex; align-items: center; gap: 4px; }
+.amount-wrap .cur {
+  font-size: 1.25rem; font-weight: 600; color: var(--mint-deep);
+}
+.amount-wrap input { color: var(--mint-deep); font-size: 1.45rem; }
+/* 隱藏 number 上下箭頭 */
+.field input[type=number]::-webkit-outer-spin-button,
+.field input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.field input[type=number] { -moz-appearance: textfield; }
+.field input[type=date] { font-size: 1.05rem; }
+
+/* 按鈕 */
+.actions { width: 100%; display: flex; gap: 12px; }
+.btn {
+  flex: 1;
+  border: none; border-radius: 18px;
+  padding: 16px 0;
+  font-family: var(--font); font-size: 1.05rem; font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(.2,.9,.3,1.4), box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn:active { transform: scale(0.95); }
+.btn--ghost {
+  flex: 0 0 34%;
+  background: #fff;
+  color: var(--ink-soft);
+  border: 2px solid var(--line);
+}
+.btn--go {
+  background: linear-gradient(135deg, #84e0c6, var(--mint-deep));
+  color: #fff;
+  box-shadow: 0 12px 22px -10px rgba(60,196,155,0.8);
+}
+.btn--go:hover { filter: brightness(1.04); }
+.btn--go:disabled { filter: grayscale(0.4) opacity(0.7); cursor: default; }
+
+/* ── 成功 ──────────────────────────────────────────────────── */
+.done__pig {
+  font-size: 5rem;
+  animation: jump 0.7s cubic-bezier(.2,.9,.3,1.5);
+}
+@keyframes jump {
+  0% { transform: scale(0.3) translateY(20px); opacity: 0; }
+  60%{ transform: scale(1.15) translateY(-8px); }
+  100%{ transform: scale(1) translateY(0); opacity: 1; }
+}
+.done__text { font-size: 1.6rem; font-weight: 700; color: var(--mint-deep); }
+.done__sub { font-size: 1rem; color: var(--ink-soft); }
+
+/* ── 入場動畫 ──────────────────────────────────────────────── */
+.review:not(.hide), .stage:not(.hide) { animation: fadeUp 0.4s cubic-bezier(.2,.9,.3,1.1) both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

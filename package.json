@@ -1,0 +1,28 @@
+{
+  "name": "voice-ledger",
+  "version": "1.0.0",
+  "description": "用語音記帳,自動寫入 Google Spreadsheet",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miterfrants/voice-ledger.git"
+  },
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "init-headers": "node src/init-headers.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "openai": "^4.77.0"
+  }
+}
