@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { transcribe } from './transcribe.js';
 import { parseExpense } from './parse.js';
 import { appendRow, ensureHeaders } from './sheets.js';
+import { startCashNotifyScheduler } from './cash-notify.js';
 import {
   requestMagicLink,
   verifyMagicToken,
@@ -108,4 +109,5 @@ app.post('/api/confirm', requireAuth, async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ 語音記帳服務啟動:http://localhost:${PORT}`);
+  startCashNotifyScheduler();
 });
