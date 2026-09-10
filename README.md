@@ -57,15 +57,14 @@ npm run init-headers
 
 ### 6. (選用)LINE 現金通知
 
-每天 **GMT+8 00:00 與 12:00** 推播「剩餘現金資產: xxxxx」給所有加官方帳號好友的人。
+每天 **GMT+8 00:00 與 12:00** 推播「現金餘額 xxxxx」給所有加官方帳號好友的人,金額取 F 欄最後一格。
 
 1. 到 https://developers.line.biz/console/ → 建立 Provider → 建立 **Messaging API** channel
    (2024 年後需先在 https://manager.line.biz/ 建官方帳號,再從「設定 → Messaging API」啟用)
 2. channel 的「Messaging API」分頁 → 最下方 **Channel access token (long-lived)** → Issue,複製
 3. 同頁關閉「自動回應訊息」(可選,免得每次有人傳訊都被機器人回)
-4. 在 `.env` 加上:
-   - `LINE_CHANNEL_ACCESS_TOKEN`:第 2 步的 token
-   - `CASH_RANGE`:現金資產所在的儲存格。用 `記帳!E:E` 會取餘額欄最後一個有值的格子;也可指定單格如 `總覽!B2`
+4. 在 `.env` 加上 `LINE_CHANNEL_ACCESS_TOKEN`(第 2 步的 token)。
+   來源預設是 `記帳!F:F`(F 欄最後一個有值的格子);要換位置可設 `CASH_RANGE`,例如 `總覽!B2`
 5. 用 channel 頁面的 QR code 加官方帳號為好友(要收通知的人都要加)
 6. 測試:
 
@@ -74,7 +73,7 @@ npm run notify-cash -- --dry   # 只印出訊息,不推播
 npm run notify-cash            # 立即推播一次
 ```
 
-服務啟動時(`npm start` / pm2)會自動排程;兩個變數缺一則略過、不影響記帳功能。
+服務啟動時(`npm start` / pm2)會自動排程;沒設 token 則略過、不影響記帳功能。
 免費方案每月 200 則,broadcast 以「收到的人數」計算(2 次/天 × 好友數)。
 
 ### 7. 啟動

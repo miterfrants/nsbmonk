@@ -1,4 +1,4 @@
-// 「剩餘現金資產」LINE 通知:讀試算表某格 → 廣播給所有好友
+// 「現金餘額」LINE 通知:讀試算表 F 欄最後一格 → 廣播給所有好友
 // 每天 GMT+8 00:00 與 12:00 各一次(由 startCashNotifyScheduler 排程)
 import { readLastValue } from './sheets.js';
 import { broadcastText, isLineConfigured } from './line.js';
@@ -6,16 +6,15 @@ import { broadcastText, isLineConfigured } from './line.js';
 const TZ_OFFSET_MS = 8 * 60 * 60 * 1000; // GMT+8,無日光節約時間
 const INTERVAL_MS = 12 * 60 * 60 * 1000; // 每 12 小時:00:00、12:00
 
+// 預設讀記帳分頁的 F 欄(累計餘額),取最後一個有值的格子
 function cashRange() {
-  const r = process.env.CASH_RANGE;
-  if (!r) throw new Error('缺少 CASH_RANGE,請在 .env 設定(例:總覽!B2)');
-  return r;
+  return process.env.CASH_RANGE || `${process.env.SHEET_NAME || '記帳'}!F:F`;
 }
 
 /** 組出要送的訊息文字 */
 export async function buildCashMessage() {
   const value = await readLastValue(cashRange());
-  return `剩餘現金資產: ${value ?? '(讀不到資料)'}`;
+  return `現金餘額 ${value ?? '(讀不到資料)'}`;
 }
 
 /** 讀試算表並推播一次 */
@@ -33,12 +32,12 @@ export function nextRunAt(now = Date.now()) {
 }
 
 /**
- * 啟動排程。未設定 LINE token 或 CASH_RANGE 就略過,不影響主服務。
+ * 啟動排程。未設定 LINE token 就略過,不影響主服務。
  * 用 setTimeout 而非 setInterval,避免程序長時間執行後累積漂移。
  */
 export function startCashNotifyScheduler() {
-  if (!isLineConfigured() || !process.env.CASH_RANGE) {
-    console.log('ℹ️  未設定 LINE_CHANNEL_ACCESS_TOKEN / CASH_RANGE,略過現金通知排程');
+  if (!isLineConfigured()) {
+    console.log('ℹ️  未設定 LINE_CHANNEL_ACCESS_TOKEN,略過現金通知排程');
     return;
   }
 
