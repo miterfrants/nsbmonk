@@ -57,7 +57,7 @@ npm run init-headers
 
 ### 6. (選用)LINE 現金通知
 
-每天 **GMT+8 00:00 與 12:00** 推播「現金餘額 xxxxx」給所有加官方帳號好友的人,金額取 F 欄最後一格。
+每天 **GMT+8 00:00 與 12:00** 推播「現金餘額 $1,234,567」給所有加官方帳號好友的人,金額取 F 欄最後一格。
 
 1. 到 https://developers.line.biz/console/ → 建立 Provider → 建立 **Messaging API** channel
    (2024 年後需先在 https://manager.line.biz/ 建官方帳號,再從「設定 → Messaging API」啟用)

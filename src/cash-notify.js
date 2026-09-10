@@ -11,10 +11,21 @@ function cashRange() {
   return process.env.CASH_RANGE || `${process.env.SHEET_NAME || '記帳'}!F:F`;
 }
 
+/**
+ * 金額格式化:$ + 千分位,最多兩位小數;負數為 -$1,234
+ * 非數字(例如儲存格是文字或公式錯誤)就原樣回傳
+ */
+export function formatMoney(value) {
+  const n = typeof value === 'number' ? value : Number(String(value).replace(/[,$\s]/g, ''));
+  if (!Number.isFinite(n)) return String(value);
+  const abs = Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  return `${n < 0 ? '-' : ''}$${abs}`;
+}
+
 /** 組出要送的訊息文字 */
 export async function buildCashMessage() {
   const value = await readLastValue(cashRange());
-  return `現金餘額 ${value ?? '(讀不到資料)'}`;
+  return `現金餘額 ${value == null ? '(讀不到資料)' : formatMoney(value)}`;
 }
 
 /** 讀試算表並推播一次 */

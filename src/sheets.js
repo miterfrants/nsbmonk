@@ -121,18 +121,20 @@ export async function appendRow(row) {
 }
 
 /**
- * 讀取指定範圍(例:`總覽!B2` 或 `記帳!F:F`),回傳最後一個非空白的儲存格值(顯示格式)。
+ * 讀取指定範圍(例:`總覽!B2` 或 `記帳!F:F`),回傳最後一個非空白的儲存格值。
  * 單一儲存格就是該格的值;整欄則是該欄最後一筆有值的格子(適合「累計餘額」欄)。
+ * 預設取原始值(數字就是 number,不受儲存格顯示格式影響),方便自行格式化。
  * @param {string} range A1 表示法,需含分頁名稱
- * @returns {Promise<string|null>}
+ * @param {{formatted?: boolean}} [opts] formatted=true 則回傳顯示格式的字串
+ * @returns {Promise<string|number|null>}
  */
-export async function readLastValue(range) {
+export async function readLastValue(range, { formatted = false } = {}) {
   const sheets = getClient();
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: spreadsheetId(),
     range,
-    valueRenderOption: 'FORMATTED_VALUE',
+    valueRenderOption: formatted ? 'FORMATTED_VALUE' : 'UNFORMATTED_VALUE',
   });
   const cells = (data.values || []).flat().filter((v) => v !== '' && v != null);
-  return cells.length ? String(cells[cells.length - 1]) : null;
+  return cells.length ? cells[cells.length - 1] : null;
 }
